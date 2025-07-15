@@ -39,7 +39,7 @@ There you can see the following fields:
 * **verbs**:  list of qualifiers
 
 Now, what is the color described in the document?  
-Let's use a color picker (in this example I used whatever Google found first)  to find out.  
+Let's use a color picker (in this example I used [whatever Google found first](https://g.co/kgs/rZawqiM))  to find out.  
 You can use either the hex code (the document key `000080`) or the RGB values stored in the `colorvect_l2` field (0, 0, 128).
 
 <img width="683" alt="image" src="https://github.com/user-attachments/assets/fb5057da-4178-495d-8e70-1f5530b053a3" />
@@ -84,7 +84,6 @@ In the search area, run the following search query:
 
 ```json
 {
-  "query": { "match_none": {} },
   "knn": [
     { "field": "colorvect_l2",  "vector": [0, 0, 128],"k": 3 }
   ],
@@ -98,7 +97,7 @@ You should see the following results:
 
 What are those color ids referring to?  
 Let's tweak our Vector index a bit to get the colors displayed as well.  
-Click `Back to Lis`t then click your `rgb_idx` to open its definition.  
+Click `Back to List` then click your `rgb_idx` to open its definition.  
 Click the field `color` which contains the name of each color in the json documents.  
 In the `Type Mapping` configuration area, check `Include in search results`. Click `Add to Index` and then `Update Index` at the bottom of the screen.
 
@@ -135,7 +134,6 @@ Now, click `Search` and then at the end of the row of your index, click the sear
 Let's run our query to retrieve the top 3 nearest colors to `[0,0,64]` and review the results:
 ```json
 {
-  "query": {"match_none": {}},
   "knn": [
        {"field": "colorvect_l2", "vector": [0,0,64], "k": 3}
   ],
@@ -184,7 +182,6 @@ Let's explore the number of results of a vector query and its practical implicat
 Let's get crazy and change the k parameter of the vector query to 153, which is the total number of documents in our collection rgb:
 ```
 {
-  "query": {"match_none": {}},
   "knn": [
        {"field": "colorvect_l2", "vector": [0,0,64], "k": 153}
   ],
@@ -200,7 +197,6 @@ Imagine your application is a recommendation engine. This is great to provide ma
 Now, let's change the k parameter of the vector query to 5.  
 ```json
 {
-  "query": {"match_none": {}},
   "knn": [
        {"field": "colorvect_l2", "vector": [0,0,64], "k": 5}
   ],
@@ -228,7 +224,6 @@ But there is no way to define what "close enough" would be. This is why most app
 Run the following search query and review the results:
 ```json
 {
-  "query": {"match_none": {}},
   "knn": [
       { "field": "colorvect_l2",  "vector": [0, 0, 128],  "k": 3 },
       { "field": "colorvect_l2",  "vector": [0, 0, 64],   "k": 3 }
@@ -252,7 +247,6 @@ Run the following search query and review the results.
 
 ```json
 {
-  "query": {"match_none": {}},
     "knn": [
        { "field": "colorvect_l2", "vector": [0, 0, 128],  "k": 3},
        { "field": "colorvect_l2",  "vector": [0, 0, 64],  "k": 3}
@@ -277,7 +271,6 @@ Let's now explore a search query combining multiple vector queries with **explic
 
 ```json
 {
-  "query": {"match_none": {}},
   "knn": [
     { "field": "colorvect_l2", "vector": [0, 0, 127], "k":3, "boost": 0.1},
     { "field": "colorvect_l2", "vector": [0, 99, 0], "k":3, "boost": 4.0}
@@ -346,7 +339,6 @@ If the same IDs are found on both sides the results are boosted to the top. Let'
 Run the following query against the `hybrid_idx` index to get the top 5 results with vector `[0,0,108]` together with their brightness.  
 ```json
 {
-  "query": {"match_none": {}},
     "knn": [  {"field": "colorvect_l2",  "vector": [0,0,108], "k": 5} ],
   "fields": ["color","brightness"]
 }
