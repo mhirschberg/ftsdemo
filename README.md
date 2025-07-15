@@ -86,14 +86,14 @@ In the search area, run the following search query:
 {
   "knn": [
     { "field": "colorvect_l2",  "vector": [0, 0, 128],"k": 3 }
-  ],
-  "fields": ["color"]
+  ]
 }
 ```
 
 You should see the following results:
 
-<img width="1156" alt="image" src="https://github.com/user-attachments/assets/fe33ea4c-b8ea-4c12-acc6-d56be68dc26b" />
+<img width="1160" height="365" alt="image" src="https://github.com/user-attachments/assets/e25fd75b-37df-4f57-8bcf-72034ee2fff3" />
+
 
 What are those color ids referring to?  
 Let's tweak our Vector index a bit to get the colors displayed as well.  
@@ -103,9 +103,19 @@ In the `Type Mapping` configuration area, check `Include in search results`. Cli
 
 <img width="1253" alt="image" src="https://github.com/user-attachments/assets/fb9dde66-4b5f-4a15-92d9-087a8e626917" />
 
-Now, run the same query as above. You should see the following results:
+Now, run the same query as above, but now including the `color` field. 
+```json
+{
+  "knn": [
+    { "field": "colorvect_l2",  "vector": [0, 0, 128],"k": 3 }
+  ],
+  "fields": ["color"]
+}
+```
+You should see the following results:
 
-<img width="1174" alt="image" src="https://github.com/user-attachments/assets/0f0d0d04-a6c6-4c85-b506-d11135bce240" />
+<img width="1129" height="465" alt="image" src="https://github.com/user-attachments/assets/bc6c6453-0e82-4946-97ba-f6bc1b964206" />
+
 
 But wait, are those results accurate?  
 To check that out, here is a table of both the Vector Query and results.  
@@ -143,7 +153,8 @@ Let's run our query to retrieve the top 3 nearest colors to `[0,0,64]` and revie
 
 Results are returned while `[0,0,64]` itself is not in the database.
 
-<img width="717" alt="image" src="https://github.com/user-attachments/assets/d3d3f878-74e6-486e-868d-8e5dbdbf3b96" />
+<img width="1147" height="517" alt="image" src="https://github.com/user-attachments/assets/253df189-09dc-4c29-98fb-6ba51e4d6299" />
+
 
 Interestingly enough, midnight blue comes as the top result, while we would probably consider black more similar to the color `[0.0, 0.0, 64.0]` when simply comparing the 2 colors with our own eyes. **Why is the vector search returning black in third position then?**
 
@@ -205,7 +216,8 @@ Now, let's change the k parameter of the vector query to 5.
 ```
 
 
-<img width="718" alt="image" src="https://github.com/user-attachments/assets/f9406f38-10f4-4b06-a5fb-fe5fc6da494f" />
+<img width="1147" height="712" alt="image" src="https://github.com/user-attachments/assets/ddaad9b1-c766-429f-b3bd-b03a2f752962" />
+
 
 You can see with your bare eyes that the relevance of the results is decreasing rapidly. T 
 he question is how fast? And at which point they shouldn't be considered relevant at all for the application?  
@@ -237,7 +249,8 @@ This is the default behavior when you put multiple vector queries in the `knn` a
 
 Results with vector `[0,0,128]` only:
 
-<img width="716" alt="image" src="https://github.com/user-attachments/assets/27d7edaa-e1d3-4f7c-acdb-fde0e5fdb63e" />
+<img width="722" height="188" alt="image" src="https://github.com/user-attachments/assets/e439b7de-38f2-4ac2-8fe3-372c03d0f431" />
+
 
 Notice that navy is at the very top because this is an exact match.  
 As we discussed previously, the color navy gets the highest score of `1.7976931348623157e+308`, compared to the scores of the other results.
@@ -259,7 +272,11 @@ Run the following search query and review the results.
 The result is the intersection of both vector queries: `navy` and `midnight blue` are returned from both vector queries.  
 This is `knn_operator`: **and**. Let's double check those results in more detail.
 
-Results with vector `[0,0,128]`:
+Results with vector `[0,0,128]`:<img width="468" height="24" alt="image" src="https://github.com/user-attachments/assets/166bcd3c-5ac4-40b2-9d28-ac7e6208aad9" />
+<img width="468" height="24" alt="image" src="https://github.com/user-attachments/assets/125ade07-c68a-4de3-ab9a-12545cff38aa" />
+<img width="468" height="24" alt="image" src="https://github.com/user-attachments/assets/e453a492-96bb-42e6-bdeb-707e8f0d8ac2" />
+<img width="468" height="24" alt="image" src="https://github.com/user-attachments/assets/270c7fc3-635e-4fa1-8f41-b48722211262" />
+
 
 <img width="713" alt="image" src="https://github.com/user-attachments/assets/cdef520c-e779-4835-82c9-0d00b11aeaa9" />
 
@@ -296,17 +313,6 @@ The reason why is because navy, encoded with `[0,0,128]`, is so close to the que
 ### Run Hybrid Search and Vector Query
 We want to run the query below. This is a hybrid search query between the traditional search side (query) and the vector search side (knn).  
 But before we can do that, we need to create a search index that covers this query.
-
-```json
-{
-  "query": {
-        "field": "brightness", "min": 70, "max": 80,
-        "inclusive_min": false,  "inclusive_max": true  },
-        "knn": [ {"field": "colorvect_l2", "vector": [0.0, 0.0, 108.0],  "k": 5} ],
-        "fields": ["color","brightness"],
-        "size": 5
-}
-```
 
 Click `Create Search Index`, name it `hybrid_idx` and select the usual context.
 
